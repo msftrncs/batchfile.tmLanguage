@@ -590,13 +590,32 @@
 		"numbers": {
 			"patterns": [
 				{
-					"match": "(?<=^|[\\s+=*/|<>(&%\",-])(?:(?:(0[xX])[0-9A-Fa-f]+|(0)[0-7]+)|[+-]?(?:0|[1-9]\\d*))(?=$|[\\s+=*/|<>)&%\",-])",
+					"match": "(?<=^|[\\s+=*/|<>(&%!\",-])(?:(?:(0[xX])[0-9A-Fa-f]+|(0)[0-7]+)|[+-]?(?:0|[1-9]\\d*))(?=$|[\\s+=*/|<>)&%!\",-])",
 					"name": "constant.numeric.batchfile",
 					"captures": {
 						"1": {
 							"name": "keyword.operator.hex.batchfile"
 						},
 						"2": {
+							"name": "keyword.operator.octal.batchfile"
+						}
+					}
+				}
+			]
+		},
+		"numbers_variable_substring": {
+			"patterns": [
+				{
+					"match": "(?<=[\\s~,%!])([+-])?(?:(?:(0[xX])[0-9A-Fa-f]+|(0)[0-7]+)|(?:0|[1-9]\\d*))(?=$|[\\s,%!])",
+					"name": "constant.numeric.batchfile",
+					"captures": {
+						"1": {
+							"name": "keyword.operator.other.batchfile"
+						},
+						"2": {
+							"name": "keyword.operator.hex.batchfile"
+						},
+						"3": {
 							"name": "keyword.operator.octal.batchfile"
 						}
 					}
@@ -749,10 +768,13 @@
 									]
 								},
 								{
-									"begin": ":",
+									"begin": "(:)(\\*)",
 									"beginCaptures": {
-										"0": {
+										"1": {
 											"name": "punctuation.separator.batchfile"
+										},
+										"2": {
+											"name": "keyword.other.special-method.batchfile"
 										}
 									},
 									"end": "$",
@@ -779,9 +801,6 @@
 										},
 										{
 											"include": "#variable_replace"
-										},
-										{
-											"include": "#variable"
 										},
 										{
 											"begin": "=",
@@ -832,6 +851,9 @@
 							]
 						}
 					}
+				},
+				{
+					"include": "#variable"
 				}
 			]
 		},
@@ -841,10 +863,19 @@
 					"include": "#escaped_characters"
 				},
 				{
-					"include": "#variable"
+					"match": "[^,%]+",
+					"captures": {
+						"0": {
+							"patterns": [
+								{
+									"include": "#numbers_variable_substring"
+								}
+							]
+						}
+					}
 				},
 				{
-					"include": "#numbers"
+					"include": "#variable"
 				},
 				{
 					"match": "(,)(.*)$",
@@ -861,7 +892,7 @@
 									"include": "#variable"
 								},
 								{
-									"include": "#numbers"
+									"include": "#numbers_variable_substring"
 								}
 							]
 						}
