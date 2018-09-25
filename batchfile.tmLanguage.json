@@ -69,7 +69,8 @@
 						}
 					},
 					"contentName": "string.unquoted.batchfile",
-					"end": "(?<!\\^)(?:\\n|(?=[&|><]))",
+					"end": "(?:$(?=\\n)|(?=[&|><]))",
+					"applyEndPatternLast": true,
 					"patterns": [
 						{
 							"include": "#escaped_characters"
@@ -107,7 +108,7 @@
 							"name": "keyword.command.batchfile"
 						}
 					},
-					"end": "(?:(?<!\\^)(?:$\\n|(?=[&|><)])))|$(?!\\n)",
+					"end": "(?:$(?=\\n)|(?=[&|><)]))",
 					"patterns": [
 						{
 							"include": "#command_set_inside"
