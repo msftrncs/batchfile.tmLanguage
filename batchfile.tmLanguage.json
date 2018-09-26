@@ -36,9 +36,6 @@
 			"include": "#labels"
 		},
 		{
-			"include": "#numbers"
-		},
-		{
 			"include": "#operators"
 		},
 		{
@@ -69,7 +66,7 @@
 						}
 					},
 					"contentName": "string.unquoted.batchfile",
-					"end": "(?:$(?=\\n)|(?=[&|><]))",
+					"end": "(?=$\\n|[&|><])",
 					"applyEndPatternLast": true,
 					"patterns": [
 						{
@@ -102,13 +99,14 @@
 		"command_set": {
 			"patterns": [
 				{
-					"begin": "(?<=^|[\\s@&(])(?<!\\^.)(?i:SET)(?=$|[\\s/])",
+					"begin": "(?<=^|[\\s@&(])(?<!\\^.)(?i:SET)(?=$|[\\s/+,.:;\\[\\]|<>(&])",
 					"beginCaptures": {
 						"0": {
 							"name": "keyword.command.batchfile"
 						}
 					},
-					"end": "(?:$(?=\\n)|(?=[&|><)]))",
+					"end": "(?=$\\n|[&|><)])",
+					"applyEndPatternLast": true,
 					"patterns": [
 						{
 							"include": "#command_set_inside"
@@ -147,7 +145,8 @@
 				},
 				{
 					"begin": "\\s+/[pP]\\s+",
-					"end": "(?<!\\^)(?:\\n|(?=[&|><)]))",
+					"end": "(?=$\\n|[&|><)])",
+					"applyEndPatternLast": true,
 					"patterns": [
 						{
 							"include": "#command_set_strings"
@@ -156,13 +155,24 @@
 							"begin": "([^\\s=]*)(=)",
 							"beginCaptures": {
 								"1": {
-									"name": "variable.other.readwrite.batchfile"
-								},
+									"name": "variable.other.readwrite.batchfile",
+									"patterns": [
+										{
+											"match": "(\\^).?",
+											"captures": {
+												"1": {
+													"name": "constant.character.escape.batchfile"
+												}
+											}
+										}
+									]
+										},
 								"2": {
 									"name": "keyword.operator.assignment.batchfile"
 								}
 							},
-							"end": "(?<!\\^)(?:$\\n?|(?=[&|><)]))",
+							"end": "(?=$\\n|[&|><)])",
+							"applyEndPatternLast": true,
 							"name": "meta.prompt.set.batchfile",
 							"patterns": [
 								{
@@ -179,13 +189,24 @@
 					"begin": "([^=]*)(=)",
 					"beginCaptures": {
 						"1": {
-							"name": "variable.other.readwrite.batchfile"
+							"name": "variable.other.readwrite.batchfile",
+							"patterns": [
+								{
+									"match": "(\\^).?",
+									"captures": {
+										"1": {
+											"name": "constant.character.escape.batchfile"
+										}
+									}
+								}
+							]
 						},
 						"2": {
 							"name": "keyword.operator.assignment.batchfile"
 						}
 					},
-					"end": "(?:(?<!\\^)(?=$\\n|[&|><)]))|$(?!\\n)",
+					"end": "(?=$\\n|[&|><)])",
+					"applyEndPatternLast": true,
 					"contentName": "string.unquoted.batchfile",
 					"patterns": [
 						{
@@ -207,14 +228,10 @@
 					"include": "#command_set_operators"
 				},
 				{
-					"include": "#numbers"
-				},
-				{
-					"match": ",",
-					"name": "punctuation.separator.batchfile"
-				},
-				{
 					"include": "#command_set_group"
+				},
+				{
+					"include": "#numbers"
 				},
 				{
 					"include": "#variables"
@@ -230,7 +247,8 @@
 							"name": "punctuation.definition.string.begin.batchfile"
 						}
 					},
-					"end": "(\")|$(?=(\\n)?)",
+					"end": "(\")|$",
+					"applyEndPatternLast": true,
 					"endCaptures": {
 						"1": {
 							"name": "punctuation.definition.string.end.batchfile"
@@ -259,16 +277,7 @@
 					"include": "#numbers"
 				},
 				{
-					"match": ",",
-					"name": "punctuation.separator.batchfile"
-				},
-				{
-					"match": "([^\\d\\s+=*/|<>()&%\"-][^\\s+=*/|<>()&%\"-]*)(?<!\\^$)",
-					"captures": {
-						"1": {
-							"name": "variable.other.readwrite.batchfile"
-						}
-					}
+					"include": "#variables"
 				}
 			]
 		},
@@ -281,7 +290,7 @@
 							"name": "punctuation.section.group.begin.batchfile"
 						}
 					},
-					"end": "\\)|$(?=\\n)",
+					"end": "\\)|$",
 					"applyEndPatternLast": true,
 					"endCaptures": {
 						"0": {
@@ -306,7 +315,7 @@
 							"name": "punctuation.section.group.begin.batchfile"
 						}
 					},
-					"end": "\\)|$(?=\\n)",
+					"end": "\\)|$",
 					"applyEndPatternLast": true,
 					"endCaptures": {
 						"0": {
@@ -325,7 +334,11 @@
 		"command_set_operators": {
 			"patterns": [
 				{
-					"match": "([^\\d\\s+=*/|<>()&%\"-][^\\s+=*/|<>()&%\"-]*)\\s*(\\+=|-=|\\*=|/=|%%=|&=|\\|=|\\^=|<<=|>>=)",
+					"match": ",",
+					"name": "punctuation.separator.batchfile"
+				},
+				{
+					"match": "([^\\d\\s+=*/|<>!()&%\"^-][^\\s+=*/|<>!()&%\"^,-]*)\\s*(\\+=|-=|\\*=|/=|%%=|&=|\\|=|\\^=|<<=|>>=)",
 					"captures": {
 						"1": {
 							"name": "variable.other.readwrite.batchfile"
@@ -344,7 +357,7 @@
 					"name": "keyword.operator.logical.batchfile"
 				},
 				{
-					"match": "\\s*([^\\d\\s+=*/|<>()&%\"-][^\\s+=*/|<>()&%\"-]*)\\s*(=)",
+					"match": "([^\\d\\s+=*/|<>!()&%\"-][^\\s+=*/|<>!()&%\"^,-]*)\\s*(=)?",
 					"captures": {
 						"1": {
 							"name": "variable.other.readwrite.batchfile"
@@ -359,7 +372,11 @@
 		"command_set_operators_unquoted": {
 			"patterns": [
 				{
-					"match": "\\s*([^\\d\\s+=*/|<>()&%\"-][^\\s+=*/|<>()&%\"-]*)\\s*(\\+=|-=|\\*=|/=|%%=|\\^&=|\\^\\|=|\\^\\^=|\\^<\\^<=|\\^>\\^>=)",
+					"match": ",",
+					"name": "punctuation.separator.batchfile"
+				},
+				{
+					"match": "([^\\d\\s+=*/|<>!()&%\"-](?:[^\\s+=*/|<>!()&%\"^,-]|\\^(?![&|<>!^]))*)\\s*(\\+=|-=|\\*=|/=|%%=|\\^&=|\\^\\|=|\\^\\^=|\\^<\\^<=|\\^>\\^>=)",
 					"captures": {
 						"1": {
 							"name": "variable.other.readwrite.batchfile"
@@ -370,7 +387,7 @@
 								{
 									"match": "(?<!\\^)\\^",
 									"captures": {
-										"1": {
+										"0": {
 											"name": "constant.character.escape.batchfile"
 										}
 									}
@@ -392,7 +409,7 @@
 								{
 									"match": "(?<!\\^)\\^",
 									"captures": {
-										"1": {
+										"0": {
 											"name": "constant.character.escape.batchfile"
 										}
 									}
@@ -402,10 +419,20 @@
 					}
 				},
 				{
-					"match": "\\s*([^\\d\\s+=*/|<>()&%\"-][^\\s+=*/|<>()&%\"-]*)\\s*(=)",
+					"match": "([^\\d\\s+=*/|<>!()&%\"-](?:[^\\s+=*/|<>!()&%\"^,-]|\\^(?![&|<>!^]|$))*)\\s*(=)?",
 					"captures": {
 						"1": {
-							"name": "variable.other.readwrite.batchfile"
+							"name": "variable.other.readwrite.batchfile",
+							"patterns": [
+								{
+									"match": "(\\^).?",
+									"captures": {
+										"1": {
+											"name": "constant.character.escape.batchfile"
+										}
+									}
+								}
+							]
 						},
 						"2": {
 							"name": "keyword.operator.assignment.batchfile"
@@ -417,7 +444,7 @@
 		"command_set_strings": {
 			"patterns": [
 				{
-					"begin": "\\s*(\")\\s*([^=]+)(=)",
+					"begin": "(\")\\s*([^=]+)(=)",
 					"beginCaptures": {
 						"1": {
 							"name": "punctuation.definition.string.begin.batchfile"
@@ -429,7 +456,8 @@
 							"name": "keyword.operator.assignment.batchfile"
 						}
 					},
-					"end": "(\")|$(?=(\\n)?)",
+					"end": "(\")|$",
+					"applyEndPatternLast": true,
 					"endCaptures": {
 						"1": {
 							"name": "punctuation.definition.string.end.batchfile"
@@ -453,7 +481,7 @@
 		"comments": {
 			"patterns": [
 				{
-					"begin": "(?:^|(&))\\s*(?=((?::[+=,;: ])))",
+					"comment": "(?:^|(&))\\s*(?=((?::[+=,;: ])))",
 					"beginCaptures": {
 						"1": {
 							"name": "keyword.operator.other.batchfile"
@@ -468,7 +496,7 @@
 									"name": "punctuation.definition.comment.batchfile"
 								}
 							},
-							"end": "(?=\\n)",
+							"end": "$",
 							"name": "comment.line.colon.batchfile"
 						}
 					]
@@ -483,11 +511,15 @@
 							"name": "punctuation.separator.batchfile"
 						}
 					},
-					"end": "(?=$|[&|><)])",
+					"end": "(?=$\\n|[&|><)])",
+					"applyEndPatternLast": true,
 					"name": "comment.line.rem.batchfile",
 					"patterns": [
 						{
 							"include": "#variables"
+						},
+						{
+							"include": "#escaped_characters"
 						}
 					]
 				},
@@ -676,15 +708,21 @@
 		"labels": {
 			"patterns": [
 				{
-					"match": "(?i)(?:^\\s*|(?<=call|goto)\\s*)(:)([^+=,;:\\s][^\\s]*)(.*)",
+					"match": "(?i:(?:^\\s*|(?<=call|goto))\\s*(:)([^+=,;:\\s][^\\s]*)|(?:^|(&))\\s*(:[+=,;:\\s]))(.*)$",
 					"captures": {
 						"1": {
-							"name": "punctuation.separator.batchfile"
+							"name": "punctuation.definition.label.batchfile"
 						},
 						"2": {
 							"name": "entity.name.label.batchfile"
 						},
 						"3": {
+							"name": "keyword.other.command-seperator.batchfile"
+						},
+						"4": {
+							"name": "comment.line.colon.batchfile punctuation.definition.comment.batchfile"
+						},
+						"5": {
 							"name": "comment.line.colon.batchfile"
 						}
 					}
@@ -694,7 +732,7 @@
 		"numbers": {
 			"patterns": [
 				{
-					"match": "(?<=^|[\\s+=*/|<>(&%\",-])(?:(?:(0[xX])[0-9A-Fa-f]+|(0)[0-7]+)|[+-]?(?:0|[1-9]\\d*))(?=$|[\\s+=*/|<>)&%\",-])",
+					"match": "(?<=^|[\\s+=*/|<>!(&%\",^-])(?:(?:(0[xX])[0-9A-Fa-f]+|(0)[0-7]+)|[+-]?(?:0|[1-9]\\d*))(?=$|[\\s+=*/|<>!)&%\",^-])",
 					"name": "constant.numeric.batchfile",
 					"captures": {
 						"1": {
@@ -722,15 +760,19 @@
 					"name": "keyword.operator.logical.batchfile"
 				},
 				{
-					"match": "(?<!\\^)&&?|\\|\\|",
+					"match": "&&|\\|\\|",
 					"name": "keyword.operator.conditional.batchfile"
 				},
 				{
-					"match": "(?<!\\^)\\|",
+					"match": "&",
+					"name": "keyword.other.command-seperator.batchfile"
+				},
+				{
+					"match": "\\|",
 					"name": "keyword.operator.pipe.batchfile"
 				},
 				{
-					"match": "(?<!\\^)(?:<&?|>[&>]?)",
+					"match": "(?:<&?|>[&>]?)",
 					"name": "keyword.operator.redirection.batchfile"
 				}
 			]
