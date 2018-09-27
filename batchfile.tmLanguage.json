@@ -459,10 +459,10 @@
 					"name": "string.quoted.double.batchfile",
 					"patterns": [
 						{
-							"include": "#variables"
+							"include": "#escaped_characters_quoted"
 						},
 						{
-							"include": "#escaped_characters_quoted"
+							"include": "#variables"
 						}
 					]
 				}
@@ -577,7 +577,12 @@
 							"name": "keyword.control.statement.batchfile"
 						},
 						"2": {
-							"name": "entity.name.label.batchfile"
+							"name": "entity.name.label.batchfile",
+							"patterns": [
+								{
+									"include": "#variables"
+								}
+							]
 						}
 					}
 				},
@@ -591,7 +596,12 @@
 							"name": "constant.language.batchfile"
 						},
 						"3": {
-							"name": "entity.name.label.batchfile"
+							"name": "entity.name.label.batchfile",
+							"patterns": [
+								{
+									"include": "#variables"
+								}
+							]
 						}
 					},
 					"end": "(?=$\\n|[&|><)])",
@@ -692,7 +702,7 @@
 		"escaped_characters_quoted": {
 			"patterns": [
 				{
-					"match": "%%|\\^!|\\^\\^",
+					"match": "\\^!",
 					"name": "constant.character.escape.batchfile"
 				}
 			]
@@ -700,7 +710,7 @@
 		"escaped_characters": {
 			"patterns": [
 				{
-					"match": "%%|\\^\\^!|\\^[&<>\\n]|\\^(?=.)",
+					"match": "\\^\\^!|\\^[&<>\\n]|\\^(?=.)",
 					"name": "constant.character.escape.batchfile"
 				}
 			]
@@ -877,8 +887,7 @@
 					"name": "string.quoted.double.batchfile",
 					"patterns": [
 						{
-							"match": "%%",
-							"name": "constant.character.escape.batchfile"
+							"include": "#escaped_characters_quoted"
 						},
 						{
 							"include": "#variables"
@@ -897,6 +906,10 @@
 						}
 					},
 					"name": "variable.parameter.batchfile"
+				},
+				{
+					"match": "%%",
+					"name": "constant.character.escape.batchfile"
 				},
 				{
 					"include": "#variable"
