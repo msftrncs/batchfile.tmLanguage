@@ -49,6 +49,26 @@
 		}
 	],
 	"repository": {
+		"argument_conditional": {
+			"patterns": [
+				{
+					"begin": "\\s*(?=[^\\s&|<>=])(?!$)",
+					"end": "(?=[\\s&|<>=])",
+					"name": "string.unquoted.batchfile",
+					"patterns": [
+						{
+							"include": "#escaped_characters"
+						},
+						{
+							"include": "#variables"
+						},
+						{
+							"include": "#strings"
+						}
+					]
+				}
+			]
+		},
 		"commands": {
 			"patterns": [
 				{
@@ -534,10 +554,6 @@
 							"contentName": "variable.other.readwrite.batchfile",
 							"patterns": [
 								{
-									"match": "\\^\\^",
-									"name:": "constant.character.escape.batchfile"
-								},
-								{
 									"match": "\\^\\s",
 									"name:": "constant.character.escape.batchfile"
 								},
@@ -545,7 +561,7 @@
 									"include": "#escaped_characters"
 								},
 								{
-									"include": "$self"
+									"include": "#variables"
 								}
 							]
 						},
@@ -613,7 +629,7 @@
 					]
 				},
 				{
-					"begin": "(?<=^|[\\s(&^])(?i:if)(?=\\s)",
+					"begin": "(?<=^|[\\s(&^])(?i:if)(?:\\s/I)?(?=\\s)",
 					"beginCaptures": {
 						"0": {
 							"name": "keyword.control.conditional.batchfile"
@@ -639,6 +655,14 @@
 									"include": "$self"
 								}
 							]
+						},
+						{
+							"match": "(?<=\\s)(?i:EQU|NEQ|LSS|LEQ|GTR|GEQ)(?=\\s)|==",
+							"name": "keyword.operator.comparison.conditional.batchfile"
+						},
+						{
+							"match": "(?<=\\s)(?i)(NOT)(?=\\s)",
+							"name": "keyword.operator.logical.conditional.batchfile"
 						},
 						{
 							"include": "#conditionalMethods"
@@ -710,7 +734,7 @@
 		"escaped_characters": {
 			"patterns": [
 				{
-					"match": "\\^\\^\\^\\^|\\^\\^!|\\^[&<>\\n]|\\^(?=.)",
+					"match": "\\^\\^\\^\\^|\\^\\^!|\\^[&<>\\n]|\\^@|\\^(?=.)",
 					"name": "constant.character.escape.batchfile"
 				}
 			]
@@ -779,14 +803,6 @@
 				{
 					"match": "(?<!\\^)@(?=\\S)",
 					"name": "keyword.operator.at.batchfile"
-				},
-				{
-					"match": "(?<=\\s)(?i:EQU|NEQ|LSS|LEQ|GTR|GEQ)(?=\\s)|==",
-					"name": "keyword.operator.comparison.batchfile"
-				},
-				{
-					"match": "(?<=\\s)(?i)(NOT)(?=\\s)",
-					"name": "keyword.operator.logical.batchfile"
 				},
 				{
 					"match": "&&|\\|\\|",
