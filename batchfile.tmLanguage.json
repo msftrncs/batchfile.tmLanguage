@@ -456,33 +456,30 @@
 			"patterns": [
 				{
 					"comment": "command_set_strings gobble all the characters on the line up during command argument processing, and are turned in to a single argument further processed, anything past the last quote is not processed",
-					"match": "\\G\\s*(\"[^\"\\n]*(?:(?:\"(?:\\^\\^|\\^[^\"]|[^\"&|><])*)\"[^\"\\n]*)*)(?:(\")(?:\\^\\^|\\^[^\"]|[^\"&|><])*)?(?=$|[&|><])",
+					"match": "\\G\\s*(\")([^\"\\n]*(?:\"(?:(\\^)\\^|(\\^)[^\"]|[^\"\\n&|><])*\"[^\"\\n]*)*\"(?:\\^\\^|\\^[^\"]|[^\"\\n&|><])*)(\")[^\"\\n]*(?=$)",
 					"captures": {
 						"1": {
+							"name": "punctuation.definition.string.begin.batchfile"
+						},
+						"2": {
+							"name": "string.quoted.set.batchfile",
 							"patterns": [
 								{
-									"begin": "\\s*(\")\\s*([^=]+)(=)",
+									"begin": "\\s*([^=]+)(=)",
 									"beginCaptures": {
 										"1": {
-											"name": "punctuation.definition.string.begin.batchfile"
+											"name": "variable.other.readwrite.batchfile",
+											"patterns": [
+												{
+													"include": "#variables"
+												}
+											]
 										},
 										"2": {
-											"name": "variable.other.readwrite.batchfile"
-										},
-										"3": {
 											"name": "keyword.operator.assignment.batchfile"
 										}
 									},
-									"end": "(\")|$(?=(\\n)?)",
-									"endCaptures": {
-										"1": {
-											"name": "punctuation.definition.string.end.batchfile"
-										},
-										"2": {
-											"name": "invalid.illegal.newline.batchfile"
-										}
-									},
-									"name": "string.quoted.double.batchfile",
+									"end": "$",
 									"patterns": [
 										{
 											"include": "#escaped_characters_quoted"
@@ -491,8 +488,66 @@
 											"include": "#variables"
 										}
 									]
+								},
+								{
+									"match": ".+",
+									"name": "invalid.illegal.syntax.batchfile"
 								}
 							]
+						},
+						"3": {
+							"name": "constant.character.escape.batchfile"
+						},
+						"4": {
+							"name": "constant.character.escape.batchfile"
+						},
+						"5": {
+							"name": "punctuation.definition.string.begin.batchfile"
+						}
+					}
+				},
+				{
+					"match": "\\G\\s*(\")([^\"\\n]*(?:\"(?:\\^\\^|\\^[^\"]|[^\"\\n&|><])*\"[^\"\\n]*)*)(\")(?:\\^\\^|\\^[^\"]|[^\"\\n&|><])*(?=$|[&|><])",
+					"captures": {
+						"1": {
+							"name": "punctuation.definition.string.begin.batchfile"
+						},
+						"2": {
+							"name": "string.quoted.set.batchfile",
+							"patterns": [
+								{
+									"begin": "\\s*([^=]+)(=)",
+									"beginCaptures": {
+										"1": {
+											"name": "variable.other.readwrite.batchfile",
+											"patterns": [
+												{
+													"include": "#variables"
+												}
+											]
+										},
+										"2": {
+											"name": "keyword.operator.assignment.batchfile"
+										}
+									},
+									"end": "$",
+									"patterns": [
+										{
+											"include": "#escaped_characters_quoted"
+										},
+										{
+											"include": "#variables"
+										}
+									]
+								},
+								{
+									"match": ".+",
+									"name": "invalid.illegal.syntax.batchfile"
+								}
+							]
+						},
+						"3": {
+							"name": "punctuation.definition.string.begin.batchfile"
 						}
 					}
 				}
@@ -928,7 +983,7 @@
 					"match": "(%)(?:(?i:~[fdpnxsatz]*(?:\\$PATH:)?)?\\d|\\*)",
 					"captures": {
 						"1": {
-							"name": "punctuation.definition.variable.batchfile"
+							"name": "keyword.other.parameter.expansion.batchfile"
 						}
 					},
 					"name": "variable.parameter.batchfile"
@@ -950,7 +1005,7 @@
 			"patterns": [
 				{
 					"name": "meta.variable.expansion.batchfile",
-					"match": "([%!])((?>\\^\\^!|(?!\\1).)+)(\\1)",
+					"match": "([%!])((?>\\^\\^!|(?!\\1)[^=])+)(\\1)",
 					"captures": {
 						"1": {
 							"name": "keyword.other.variable.expansion.begin.batchfile"
