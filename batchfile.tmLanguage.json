@@ -510,7 +510,7 @@
 					"match": "\\G\\s*(\")([^\"\\n]*(?:\"(?:\\^\\^|\\^[^\"]|[^\"\\n&|><])*\"[^\"\\n]*)*)(\")(?:\\^\\^|\\^[^\"]|[^\"\\n&|><])*(?=$|[&|><])",
 					"captures": {
 						"1": {
-							"name": "punctuation.definition.string.begin.batchfile"
+							"name": "string.quoted.set.batchfile punctuation.definition.string.begin.batchfile"
 						},
 						"2": {
 							"name": "string.quoted.set.batchfile",
@@ -547,7 +547,7 @@
 							]
 						},
 						"3": {
-							"name": "punctuation.definition.string.begin.batchfile"
+							"name": "string.quoted.set.batchfile punctuation.definition.string.begin.batchfile"
 						}
 					}
 				}
@@ -607,7 +607,7 @@
 					"begin": "\\G\\s*(?i:\\^?(exist|defined|errorlevel|cmdextversion))",
 					"beginCaptures": {
 						"1": {
-							"name": "keyword.other.special-method.batchfile"
+							"name": "keyword.operator.conditional-methods.batchfile"
 						}
 					},
 					"end": "(?=\\s|$)",
@@ -867,7 +867,7 @@
 			"patterns": [
 				{
 					"match": "(?<!\\^)@(?=\\S)",
-					"name": "keyword.operator.at.batchfile"
+					"name": "keyword.other.at.batchfile"
 				},
 				{
 					"match": "&&|\\|\\|",
@@ -875,7 +875,7 @@
 				},
 				{
 					"match": "&",
-					"name": "keyword.other.command-separator.batchfile"
+					"name": "keyword.operator.command-separator.batchfile"
 				},
 				{
 					"match": "\\|",
@@ -996,7 +996,7 @@
 					"include": "#variable"
 				},
 				{
-					"match": "%",
+					"match": "%|!",
 					"name": "invalid.illegal.incomplete-substitution.batchfile"
 				}
 			]
@@ -1005,7 +1005,8 @@
 			"patterns": [
 				{
 					"name": "meta.variable.expansion.batchfile",
-					"match": "([%!])((?>\\^\\^!|(?!\\1)[^=])+)(\\1)",
+					"match": "([%!](?:(?<!!)|(?=[^&|><!]*!)))((?!\\1)[^:](?:(?!\\1).)*)(\\1)",
+					"comment": "variable expansions (% or !) but not starting with ':' and ! cannot have &,|,< or > within unless somehow quoted",
 					"captures": {
 						"1": {
 							"name": "keyword.other.variable.expansion.begin.batchfile"
@@ -1014,13 +1015,30 @@
 							"name": "keyword.other.variable.expansion.end.batchfile"
 						},
 						"2": {
-							"name": "variable.other.readwrite.batchfile",
 							"patterns": [
+								{
+									"match": "[^:]+",
+									"captures": {
+										"0": {
+											"patterns": [
+												{
+													"match": "=",
+													"name": "invalid.illegal.unexpected-character.batchfile"
+												}
+											]
+										}
+									},
+									"name": "variable.other.readwrite.batchfile"
+								},
+								{
+									"match": ":$",
+									"name": "invalid.illegal.unexpected-character.batchfile"
+								},
 								{
 									"begin": ":~",
 									"beginCaptures": {
 										"0": {
-											"name": "punctuation.separator.batchfile"
+											"name": "keyword.operator.substring.batchfile"
 										}
 									},
 									"end": "$",
@@ -1032,13 +1050,13 @@
 									]
 								},
 								{
-									"begin": "(:)(\\*)",
+									"begin": "(:)(\\*)?",
 									"beginCaptures": {
 										"1": {
-											"name": "punctuation.separator.batchfile"
+											"name": "keyword.operator.substitution.batchfile"
 										},
 										"2": {
-											"name": "keyword.other.special-method.batchfile"
+											"name": "keyword.operator.wildcard.batchfile"
 										}
 									},
 									"end": "$",
@@ -1070,7 +1088,7 @@
 											"begin": "=",
 											"beginCaptures": {
 												"0": {
-													"name": "punctuation.separator.batchfile"
+													"name": "keyword.operator.replacement.batchfile"
 												}
 											},
 											"end": "$",
