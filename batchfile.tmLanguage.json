@@ -459,7 +459,7 @@
 					"match": "\\G\\s*(\")([^\"\\n]*(?:\"(?:(\\^)\\^|(\\^)[^\"]|[^\"\\n&|><])*\"[^\"\\n]*)*\"(?:\\^\\^|\\^[^\"]|[^\"\\n&|><])*)(\")[^\"\\n]*(?=$)",
 					"captures": {
 						"1": {
-							"name": "punctuation.definition.string.begin.batchfile"
+							"name": "string.quoted.set.batchfile punctuation.definition.string.begin.batchfile"
 						},
 						"2": {
 							"name": "string.quoted.set.batchfile",
@@ -502,7 +502,7 @@
 							"name": "constant.character.escape.batchfile"
 						},
 						"5": {
-							"name": "punctuation.definition.string.begin.batchfile"
+							"name": "string.quoted.set.batchfile punctuation.definition.string.end.batchfile"
 						}
 					}
 				},
@@ -547,7 +547,7 @@
 							]
 						},
 						"3": {
-							"name": "string.quoted.set.batchfile punctuation.definition.string.begin.batchfile"
+							"name": "string.quoted.set.batchfile punctuation.definition.string.end.batchfile"
 						}
 					}
 				}
@@ -1022,7 +1022,7 @@
 						"2": {
 							"patterns": [
 								{
-									"match": "[^:]+",
+									"match": "[^:%]+",
 									"captures": {
 										"0": {
 											"patterns": [
@@ -1034,6 +1034,9 @@
 										}
 									},
 									"name": "variable.other.readwrite.batchfile"
+								},
+								{
+									"include": "#variables"
 								},
 								{
 									"match": ":$",
@@ -1067,6 +1070,10 @@
 									"end": "$",
 									"name": "meta.variable.expansion.substitution.batchfile",
 									"patterns": [
+										{
+											"match": "\\G=",
+											"name": "invalid.illegal.unexpected-character.batchfile"
+										},
 										{
 											"match": "[^=%]+",
 											"name": "string.unquoted.batchfile",
