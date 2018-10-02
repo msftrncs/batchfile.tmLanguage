@@ -569,14 +569,16 @@
 						}
 					},
 					"end": "(?=$\\n|[&|><)])",
-					"applyEndPatternLast": true,
 					"name": "comment.line.rem.batchfile",
 					"patterns": [
 						{
-							"include": "#variables"
+							"match": "!"
 						},
 						{
 							"include": "#escaped_characters"
+						},
+						{
+							"include": "#variables"
 						}
 					]
 				},
@@ -590,6 +592,9 @@
 					"end": "$",
 					"name": "comment.line.rem.batchfile",
 					"patterns": [
+						{
+							"match": "!"
+						},
 						{
 							"include": "#variables"
 						},
