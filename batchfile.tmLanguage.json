@@ -76,7 +76,7 @@
 					"name": "keyword.command.batchfile"
 				},
 				{
-					"begin": "(?i)(?<=^|[\\s@&(])(?<!\\^.)(echo)(?:(?:$|[.:/;+=])|\\s+(?:(on|off)(?=\\s*$))?)",
+					"begin": "(?i)(?<=^|[\\s@&(])(?<!\\^.)(echo)(?:(?:$|[.:/;+=])|\\s(?:\\s*(on|off)(?=\\s*$))?)",
 					"beginCaptures": {
 						"1": {
 							"name": "keyword.command.batchfile"
@@ -689,7 +689,7 @@
 					}
 				},
 				{
-					"begin": "(?<=^|[\\s&@(])(?<!\\^.)(?i:(goto))\\s*(?i:(:EOF\\b)|(:?[^+=,;:\\s]*))",
+					"begin": "(?<=^|[\\s&@(])(?<!\\^.)(?i:(goto)\\b)(?i:\\s*(:EOF\\b)|\\s*((?::|(?<=\\s))[^+=,;:&|><\\s]+))?",
 					"beginCaptures": {
 						"1": {
 							"name": "keyword.control.statement.batchfile"
@@ -1026,13 +1026,13 @@
 			"patterns": [
 				{
 					"name": "meta.variable-expansion.batchfile",
-					"match": "([%!](?:(?<!!)|(?=[^&|><!]*!)))((?!\\1)[^:%](?:(?!\\1)(?:[^%:]|%[^%]*%))*(?::~(?:(?!\\1)(?:[^%]|%[^%]*%))*|:(?!~|\\1)(?:(?!\\1)(?:[^%=]|%[^%]*%)|!)*=(?:(?!\\1)(?:[^%]|%[^%]*%))*|:)?)(\\1)",
+					"match": "([%!])(?:(?<!!)|(?=[^&|><!]*!))((?!\\1|:)(?:(?!\\1)(?:[^%:]|(%[^%]*%)))*(?::~(?:(?!\\1)(?:[^%]|(?=%)\\g<3>))*|:(?!~|\\1)(?:(?!\\1)(?:[^%=]|(?=%)\\g<3>)|!)*=(?:(?!\\1)(?:[^%]|(?=%)\\g<3>))*|:)?)(\\1)",
 					"comment": "variable expansions (% or !) but not starting with ':' and ! cannot have &,|,< or > within unless somehow quoted",
 					"captures": {
 						"1": {
 							"name": "keyword.other.variable.expansion.begin.batchfile"
 						},
-						"3": {
+						"4": {
 							"name": "keyword.other.variable.expansion.end.batchfile"
 						},
 						"2": {
