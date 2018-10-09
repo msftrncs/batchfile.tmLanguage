@@ -572,7 +572,22 @@
 					"name": "comment.line.rem.batchfile",
 					"patterns": [
 						{
+							"comment": "consume delayed expansion '!' as it will never expand here",
 							"match": "!"
+						},
+						{
+							"comment": "consume quoted material, to prevent escape characters, per normal parsing",
+							"begin": "\"",
+							"end": "\"|$",
+							"patterns": [
+								{
+									"comment": "consume delayed expansion '!' as it will never expand here",
+									"match": "!"
+								},
+								{
+									"include": "#variables"
+								}
+							]
 						},
 						{
 							"include": "#escaped_characters"
@@ -593,6 +608,7 @@
 					"name": "comment.line.rem.batchfile",
 					"patterns": [
 						{
+							"comment": "consume delayed expansion '!' as it will never expand here",
 							"match": "!"
 						},
 						{
@@ -1002,15 +1018,15 @@
 				},
 				{
 					"match": "%|!",
-					"name": "invalid.illegal.incomplete-substitution.batchfile"
+					"name": "invalid.illegal.incomplete-expansion.batchfile"
 				}
 			]
 		},
 		"variable": {
 			"patterns": [
 				{
-					"name": "meta.variable.expansion.batchfile",
-					"match": "([%!](?:(?<!!)|(?=[^&|><!]*!)))((?!\\1)[^:](?:(?!\\1).)*)(\\1)",
+					"name": "meta.variable-expansion.batchfile",
+					"match": "([%!](?:(?<!!)|(?=[^&|><!]*!)))((?!\\1)[^:%](?:(?!\\1)(?:[^%:]|%[^%]*%))*(?::~(?:(?!\\1)(?:[^%]|%[^%]*%))*|:(?!~|\\1)(?:(?!\\1)(?:[^%=]|%[^%]*%)|!)*=(?:(?!\\1)(?:[^%]|%[^%]*%))*|:)?)(\\1)",
 					"comment": "variable expansions (% or !) but not starting with ':' and ! cannot have &,|,< or > within unless somehow quoted",
 					"captures": {
 						"1": {
@@ -1022,7 +1038,7 @@
 						"2": {
 							"patterns": [
 								{
-									"match": "[^:%]+",
+									"match": "[^:%]+(?::$)?",
 									"captures": {
 										"0": {
 											"patterns": [
@@ -1050,7 +1066,7 @@
 										}
 									},
 									"end": "$",
-									"name": "meta.variable.expansion.substring.batchfile",
+									"name": "meta.variable-expansion-substring.batchfile",
 									"patterns": [
 										{
 											"include": "#variable_substring"
@@ -1068,7 +1084,7 @@
 										}
 									},
 									"end": "$",
-									"name": "meta.variable.expansion.substitution.batchfile",
+									"name": "meta.variable-expansion-substitution.batchfile",
 									"patterns": [
 										{
 											"match": "\\G=",
